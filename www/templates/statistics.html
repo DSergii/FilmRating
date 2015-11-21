@@ -1,0 +1,13 @@
+<ion-view view-title="Statistics">
+  <ion-content>
+  	<div class="statistics" ng-controller="statisticsCtrl as sc">
+		<div class="text-center">
+			<div class="text-inner">
+				<div class="text-last">
+					<canvas id="pie" class="chart chart-pie" chart-legend="true"  chart-data="sc.data"  chart-labels="sc.labels"></canvas> 
+				</div>
+			</div>
+		</div>
+	</div>
+  </ion-content>
+</ion-view>

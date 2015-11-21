@@ -1,0 +1,45 @@
+<ion-view view-title="Best Top Twenty Films" ng-controller="bfCtrl as bfc">
+  <ion-content class="padding">
+   <ion-list class="list">
+      <ion-item class="item-remove-animate item-thumbnail-left item-icon-right" ng-repeat="film in bfc.filmData" type="item-text-wrap" >
+        <img ng-src="{{film.urlPoster}}">
+        <div class="holder">
+			<span class="title">{{film.title}}</span>
+		</div>
+		<div class="holder">
+			<span class="text">Year:</span>
+			<span class="right">{{film.year}}</span>
+		</div>
+		<div class="holder">
+			<span class="text">Rating:</span>
+			<span class="right">{{film.rating}}</span>
+		</div>
+		<div class="holder">
+			<span class="text">Ganre:</span>
+			<div class="wrap">
+				<span class="right" ng-repeat="ganre in film.genres">{{ ganre }}</span>
+			</div>
+		</div>
+		<div class="holder">
+			<span class="text">Country:</span>
+			<div class="wrap">
+				<span class="right" ng-repeat="country in film.countries">{{ country }}</span>
+			</div>
+		</div>
+		<div class="holder">
+			<span class="text">Directors:</span>
+			<div class="wrap">
+				<a class="right" href="http://www.imdb.com/name/{{dir.nameId}}" target="_blank" ng-repeat="dir in film.directors" >{{dir.name}}</a>
+			</div>
+		</div>
+		 <label class="checkbox">
+		 	Add to favorite
+			<input type="checkbox" ng-model="state" ng-init="state=bfc.checkState(film.idIMDB)" ng-change="bfc.saveFilms(film, state)">
+		</label>
+		<div class="holder">
+			<a class="button icon-right ion-arrow-right-b button-calm" ng-click="bfc.showAlert()">View Trailer</a>
+		</div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>
