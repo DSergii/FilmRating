@@ -7,16 +7,16 @@
 		
 		function bfCtrl($scope, $http, $ionicPopup, localStorageService, $rootScope, $ionicLoading){
 			var vm = this;
-			vm.filmData = [];
-			vm.counter = 0;
 			var fav = localStorageService.get('favorite');
+			var urlFilm = "http://www.myapifilms.com/imdb/top?format=JSON&start=1&end=20&data=F";
+			
+			vm.filmData = [];
+			
 			if(!fav) {
 				fav = {};
 				localStorageService.set('favorite', fav);
-			}else{
-				fav = localStorageService.get('favorite');
 			}
-			var urlFilm = "http://www.myapifilms.com/imdb/top?format=JSON&start=1&end=20&data=F";
+			if(!localStorageService.get('top')) localStorageService.set('top', {});
 			
 			vm.show = function() {
 				$ionicLoading.show({
@@ -27,38 +27,42 @@
 				$ionicLoading.hide();
 			};
 			vm.checkState = function(id){
-				if(fav[id] != undefined)
-					return true;
-				return false;
+				return fav[id] != undefined;
 			}
-
-			vm.show();
-			$http.get(urlFilm).then(function(response){
-				vm.filmData = response.data;
-				$rootScope.allFilms = response.data;
-				vm.hide(vm.filmData);
-			}, function(response){
-				alert('Sorry, but server not available. Please try again later, or check your internet connection.');
-			});
 			vm.showAlert = function(id) {
-				var alertPopup = $ionicPopup.alert({
+				$ionicPopup.alert({
 					title: '<h2>Trailer</h2>',
 					template: '<h4>Sorry, but this functional not working now.</h4>'
 				});
 			};
 			
 			vm.saveFilms = function(data, status){
-				if(status){
-					fav = localStorageService.get('favorite');
-					fav[data['idIMDB']] = data;
-					localStorageService.set('favorite', fav);
-				}
-				else{
-					fav = localStorageService.get('favorite');
-					delete fav[data['idIMDB']];
-					localStorageService.set('favorite', fav);
-				}
+				fav = localStorageService.get('favorite');
+				
+				if(status) fav[data['idIMDB']] = data;
+				else delete fav[data['idIMDB']];
+				
+				localStorageService.set('favorite', fav);
 			}
+			if(!$rootScope.load || $rootScope.load > 10){
+				vm.show();
+				$rootScope.load = 1;
+				$http.get(urlFilm).then(function(response){
+					localStorageService.set('top', response.data);
+					vm.filmData = $rootScope.allFilms = response.data;
+					vm.hide();
+				}, function(response){
+					delete $rootScope.load;
+					vm.filmData = $rootScope.allFilms = localStorageService.get('top');
+					vm.hide();
+					alert('Sorry, but server not available. Please try again later, or check your internet connection.');
+				});
+			}
+			else{
+				vm.filmData = $rootScope.allFilms = localStorageService.get('top');
+				$rootScope.load++;
+			}
+			
 		}
 	
 })();
